@@ -1,18 +1,17 @@
-import numpy as np
 import pandas as pd
 from collections import Counter
 import re
 from en_function_words import FUNCTION_WORDS
 import operator
 from nltk.corpus import words
-
+from string import punctuation
 regex = re.compile('[%s]' % re.escape(punctuation))
 
 common_words = set(words.words())
 FUNCTION_WORDS = set(FUNCTION_WORDS)
 
 """
-A script to identify 
+A script to identify words that would indicate that a post is a translation post
 """
 
 
