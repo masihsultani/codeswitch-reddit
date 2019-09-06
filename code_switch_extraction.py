@@ -45,34 +45,32 @@ def code_switch_polyglot(country, translation=True):
             if ("bot" in author.lower()) or ("AutoModerator" in author):
                 continue
             date = data["created_utc"]
-            id = data["id"]
+            post_id = data["id"]
             link_id = data["link_id"]
             parent_id = data["parent_id"]
 
             if "body" in data.keys():
                 langs = find_langs(data["body"], translation)
 
-
             elif "selftext" in data.keys():
-                langs = find_langs(data["selftext"],translation)
+                langs = find_langs(data["selftext"], translation)
             else:
                 langs = None
             if langs is None:
                 continue
             else:
-                lang1 =langs[0]
-                lang2 =langs[1]
+                lang1 = langs[0]
+                lang2 = langs[1]
                 confidence = langs[2]
                 code_switch = Post(author, sub_reddit, date, country, confidence, raw_text,
                                    lang1,
-                                   lang2, id, link_id, parent_id)
+                                   lang2, post_id, link_id, parent_id)
             comments.append(code_switch)
         posts.close()
 
-
-
     print(country, "done")
     return comments
+
 
 def find_langs(raw_text, translation=True):
     """
@@ -104,11 +102,12 @@ def find_langs(raw_text, translation=True):
             lang2 = detector.languages[1].name
             confidence = detector.languages[1].confidence
 
-            return lang1,lang2,confidence
+            return lang1, lang2, confidence
         else:
             return None
     else:
         return None
+
 
 def clean_text(text):
     """
@@ -117,14 +116,13 @@ def clean_text(text):
     :return: str
         return cleaned string
     """
-    new_string = re.sub('&gt;.*', ' ', text) # remove replies to
-    new_string = re.sub('&.*;', ' ', new_string) # remove replied to
-    new_string = re.sub("r\/.*\s", ' ', new_string) # remove any subreddit links
-    new_string = re.sub("u\/.*\s", " ", new_string) #remove user names
+    new_string = re.sub('&gt;.*', ' ', text)  # remove replies to
+    new_string = re.sub('&.*;', ' ', new_string)  # remove replied to
+    new_string = re.sub("r\/.*\s", ' ', new_string)  # remove any subreddit links
+    new_string = re.sub("u\/.*\s", " ", new_string)  # remove user names
     new_string = ''.join(z for z in new_string if z.isprintable())
 
     string_list = re.findall('\".*\"', new_string)
-
 
     # remove quotes that are longer than 5 words in length
     for string in string_list:
@@ -138,7 +136,6 @@ def clean_text(text):
         new_string = new_string.replace(ent.text, " ")
 
     return new_string
-
 
 
 def is_translation(text):
@@ -170,4 +167,3 @@ if __name__ == "__main__":
     header = Post.header()
     comments_df = pd.DataFrame([x.to_tuple() for x in comments_array], columns=header)
     pd.DataFrame.to_csv(comments_df, out_file, index=False, encoding='utf-8')
-

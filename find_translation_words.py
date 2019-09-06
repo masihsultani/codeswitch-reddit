@@ -11,6 +11,10 @@ regex = re.compile('[%s]' % re.escape(punctuation))
 common_words = set(words.words())
 FUNCTION_WORDS = set(FUNCTION_WORDS)
 
+"""
+A script to identify 
+"""
+
 
 def clean_string(string):
     """
