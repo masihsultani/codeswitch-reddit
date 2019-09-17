@@ -34,7 +34,7 @@ def crawl_subreddit_data(subreddit_name, retrieval_type='comment'):
     before_date = today_timestamp
     previous_time = before_date
 
-    with open("/ais/hal9000/masih/allposts/" + subreddit_name + '.' + retrieval_type + '.json.out', 'w') as fout:
+    with open( subreddit_name + '.' + retrieval_type + '.json.out', 'w') as fout:
         count = 0
         done = False
         while not done:

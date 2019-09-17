@@ -3,7 +3,6 @@ import re
 import pandas as pd
 import numpy as np
 from post import Post
-from datetime import datetime
 from polyglot.detect import Detector
 from polyglot.text import Text
 import spacy
@@ -27,7 +26,7 @@ def code_switch_polyglot(country, translation=True):
     """
     global valid_countries
     comments = []
-    final_file = f"/ais/hal9000/masih/allposts/{country}.comment.json.out"
+    final_file = f"{country}.comment.json.out" #f"/ais/hal9000/masih/allposts/{country}.comment.json.out"
 
     with open(final_file, "r") as posts:
 
@@ -50,15 +49,19 @@ def code_switch_polyglot(country, translation=True):
             parent_id = data["parent_id"]
 
             if "body" in data.keys():
-                langs = find_langs(data["body"], translation)
+                raw_text = data["body"]
 
             elif "selftext" in data.keys():
-                langs = find_langs(data["selftext"], translation)
+
+                raw_text = data["selftext"]
             else:
-                langs = None
+                continue
+
+            langs = find_langs(raw_text, translation)
             if langs is None:
                 continue
             else:
+
                 lang1 = langs[0]
                 lang2 = langs[1]
                 confidence = langs[2]
@@ -157,10 +160,11 @@ def is_translation(text):
 
 if __name__ == "__main__":
     out_file = "/ais/hal9000/masih/final_cs/final_version5.csv"
+    out_file ="netherlands_codeswitch.csv"
     eng_countries = ["Canada", "US", "Australia", "UK", "NewZealand"]
     pool = mp.Pool(8)  # specify how many cores to use
     countries = np.loadtxt("countries.txt", usecols=0, dtype="str")
-    valid_countries = [x for x in countries if x not in eng_countries]
+    valid_countries = ["thenetherlands"]#[x for x in countries if x not in eng_countries]
     results = pool.map(code_switch_polyglot, valid_countries)
     comments_array = [item for sublist in results for item in sublist]
 
