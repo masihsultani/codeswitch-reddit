@@ -12,7 +12,7 @@ import multiprocessing as mp
 spacy.require_gpu()
 nlp = xx_ent_wiki_sm.load()
 false_langs = ["kn", "un", "or", "chr", "xx"]
-translation_words = np.loadtxt("translationprobs.txt", usecols=0, dtype="str")
+translation_words = np.loadtxt("translation_prob.csv", usecols=0, dtype="str")
 
 
 def code_switch_polyglot(country, translation=True):
@@ -26,7 +26,7 @@ def code_switch_polyglot(country, translation=True):
     """
     global valid_countries
     comments = []
-    final_file = f"{country}.comment.json.out" #f"/ais/hal9000/masih/allposts/{country}.comment.json.out"
+    final_file = f"/ais/hal9000/masih/codeswitch/allposts/{country}.comment.json.out"
 
     with open(final_file, "r") as posts:
 
@@ -159,13 +159,14 @@ def is_translation(text):
 
 
 if __name__ == "__main__":
-    out_file = "/ais/hal9000/masih/final_cs/final_version5.csv"
-    out_file ="netherlands_codeswitch.csv"
+    out_file = "/ais/hal9000/masih/codeswitch/final_cs/netherlands_codeswitch.csv"
+
     eng_countries = ["Canada", "US", "Australia", "UK", "NewZealand"]
-    pool = mp.Pool(8)  # specify how many cores to use
+    #pool = mp.Pool(1)  # specify how many cores to use
     countries = np.loadtxt("countries.txt", usecols=0, dtype="str")
-    valid_countries = ["thenetherlands"]#[x for x in countries if x not in eng_countries]
-    results = pool.map(code_switch_polyglot, valid_countries)
+    valid_countries = ["Venezuela"]#[x for x in countries if x not in eng_countries]
+    #results = pool.map(code_switch_polyglot, valid_countries)
+    results = [code_switch_polyglot(x) for x in valid_countries]
     comments_array = [item for sublist in results for item in sublist]
 
     header = Post.header()
