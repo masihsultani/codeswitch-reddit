@@ -150,8 +150,10 @@ def is_translation(text):
 
     :return: bool
     """
-    post = Text(text)
-    all_words = [word.lower() for word in post.words if word.isalpha()]
+    if text =="":
+        return True
+    post_lst = text.lower().split()
+    all_words = [x for x in post_lst if x.isalpha()]
     for word in all_words:
         if word in translation_words:
             return True
