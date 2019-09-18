@@ -11,9 +11,9 @@ import multiprocessing as mp
 from pathlib import Path
 spacy.require_gpu()
 nlp = xx_ent_wiki_sm.load()
-false_langs = ["kn", "un", "or", "chr", "xx"]
+false_langs = {"kn", "un", "or", "chr", "xx"}
 translation_words = np.loadtxt("translation_prob.csv", usecols=0, dtype="str")
-
+translation_words = set(translation_words)
 
 def code_switch_polyglot(country, translation=True):
     """
