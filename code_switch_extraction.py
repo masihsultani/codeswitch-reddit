@@ -155,7 +155,7 @@ def is_translation(text):
     if text == "":
         return True
     post_lst = text.lower().split()
-    all_words = [x for x in post_lst if x.isalpha()]
+    all_words = [x for x in post_lst]
     for word in all_words:
         if word in translation_words:
             return True
