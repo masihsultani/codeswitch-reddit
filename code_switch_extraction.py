@@ -7,7 +7,7 @@ from polyglot.detect import Detector
 
 import spacy
 import xx_ent_wiki_sm
-# import multiprocessing as mp
+import multiprocessing as mp
 from pathlib import Path
 
 spacy.require_gpu()
@@ -167,12 +167,12 @@ if __name__ == "__main__":
     data_folder = Path("/ais/hal9000/masih/codeswitch/final_cs/")
     out_file = data_folder / "netherlands_codeswitch.csv"
     eng_countries = ["Canada", "US", "Australia", "UK", "NewZealand"]
-    # pool = mp.Pool(1)  # specify how many cores to use
+    pool = mp.Pool(1)  # specify how many cores to use
     countries = np.loadtxt("countries.txt", usecols=0, dtype="str")
-    valid_countries = ["thenetherlands"]  # [x for x in countries if x not in eng_countries]
-    # results = pool.map(code_switch_polyglot, valid_countries) # if you want to use multiprocessing
+    valid_countries = [x for x in countries if x not in eng_countries]
+    results = pool.map(code_switch_polyglot, valid_countries) # if you want to use multiprocessing
     # results = [code_switch_polyglot(x) for x in valid_countries]
-    comments_array = code_switch_polyglot("thenetherlands")
+    comments_array = [item for sublist in results for item in sublist]
 
     header = Post.header()
     comments_df = pd.DataFrame([x.to_tuple() for x in comments_array], columns=header)
