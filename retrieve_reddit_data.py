@@ -6,6 +6,7 @@ import pandas as pd
 import spacy
 import multiprocessing as mp
 from pathlib import Path
+import time
 
 
 def has_text(element):
@@ -34,7 +35,7 @@ def crawl_subreddit_data(subreddit_name, retrieval_type='comment'):
     today_timestamp = int((today - datetime.datetime(1970, 1, 1)).total_seconds())
     before_date = today_timestamp
     previous_time = before_date
-    out_folder = Path(f"/ais/hal9000/masih/codeswitch/allposts/")
+    out_folder = Path(f"/ais/hal9000/masih/surprisal/UK/")
     out_file = out_folder / f"{subreddit_name}.{retrieval_type}.json.out"
     with open(out_file, 'w') as fout:
         count = 0
@@ -44,10 +45,13 @@ def crawl_subreddit_data(subreddit_name, retrieval_type='comment'):
             count += 1
             query = PUSHSHIFT_ENDPOINT + retrieval_type + '/?subreddit=' + subreddit_name + \
                     '&sort=desc&size=' + str(MAX_RETRIEVED_ELEMENTS) + '&before=' + str(before_date)
-            print(query, 'request #', count)
 
             r = requests.get(query)
-            if r.status_code is not 200:
+            if r.status_code == 429:
+                time.sleep(1.5)
+                print('bad response code:', r.status_code)
+                continue
+            elif r.status_code is not 200:
                 print('bad response code:', r.status_code)
                 break
 
@@ -70,6 +74,7 @@ def crawl_subreddit_data(subreddit_name, retrieval_type='comment'):
                 print("done")
             else:
                 previous_time = before_date
+
         # end if
     # end while
 
@@ -83,7 +88,7 @@ PUSHSHIFT_ENDPOINT = 'https://api.pushshift.io/reddit/search/'
 
 
 def main():
-    subreddits = sys.argv[1] # file location containing list of subreddits to retrieve from
+    subreddits = sys.argv[1]  # file location containing list of subreddits to retrieve from
     retrieval_type = sys.argv[2]
     assert (retrieval_type in ['submission', 'comment'])
     sub_lst = []
@@ -92,7 +97,7 @@ def main():
             subreddit_name = line.strip()
             sub_lst.append(subreddit_name)
     for x in sub_lst:
-        crawl_subreddit_data(x)
+        crawl_subreddit_data(x, retrieval_type)
 
 
 if __name__ == '__main__':
